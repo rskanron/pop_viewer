@@ -10,6 +10,10 @@
         crossorigin=""
         ></script>
 
+    <!-- <script src="lodash.js"></script> -->
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3-array.v2.min.js"></script>
+
     <style>
         html,
         body,
@@ -29,10 +33,49 @@
     <script>
 
         var map = L.map('map').setView([51.505, -0.09], 13);
-        var Esri_WorldPhysical = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/{z}/{y}/{x}', {
+        
+        var tileLayer = L.tileLayer(
+            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/{z}/{y}/{x}', {
             attribution: 'Tiles &copy; Esri &mdash; Source: US National Park Service',
             maxZoom: 8
+
+            // 'https://stamen-tiles-{s}.a.ssl.fastly.net/terrain-background/{z}/{x}/{y}{r}.{ext}', {
+            // attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            // subdomains: 'abcd',
+            // minZoom: 0,
+            // maxZoom: 18,
+            // ext: 'png'
         }).addTo(map);
+
+        var cityPopulations = []; 
+        d3.csv('alldata.csv').then(showCitiesForSelectedTime);
+
+        function showCitiesForSelectedTime(data) 
+        {
+            delete data.columns;
+            // populationsByYear = populationsByYear.map(pop => pop);
+            var populationsByYear = d3.group(data, data => data.year);
+            
+            var selectedYear = "2000";
+            
+            var populationsForSelectedYear = populationsByYear.get(selectedYear);
+
+            populationsForSelectedYear.forEach(city => showCityPopulation(city));
+        }
+
+       
+        function showCityPopulation(city) {
+
+            var radius = city.pop / 500;
+
+            var circle = L.circle([city.Latitude, city.Longitude], {
+                color: 'red',
+                fillColor: '#f03',
+                fillOpacity: 0.5,
+                radius: radius
+            }).addTo(map);
+        }
+        
 
     </script>
 
