@@ -62,12 +62,11 @@
 
         function showCitiesForSelectedTime(data) 
         {
+            var selectedYear = "2000";
+            
             delete data.columns;
-            // populationsByYear = populationsByYear.map(pop => pop);
+            
             var populationsByYear = d3.group(data, data => data.year);
-            
-            var selectedYear = "1800";
-            
             var populationsForSelectedYear = populationsByYear.get(selectedYear);
 
             populationsForSelectedYear.forEach(city => showCityPopulation(city));
